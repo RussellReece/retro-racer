@@ -26,8 +26,8 @@ const imgObstacle = new Image();    imgObstacle.src = 'assets/tire_barrier.png';
 // --- PLAYER OBJECT ---
 const player = {
     y: 550, // Posisi vertikal mobil (tetap di bawah)
-    width: 60,
-    height: 100,
+    width: 75,
+    height: 90,
     sprite: imgCarStraight,
     
     draw: function() {
@@ -120,8 +120,8 @@ class Obstacle {
     }
 
     draw() {
-        let w = 50 * this.scale;
-        let h = 50 * this.scale;
+        let w = 80 * this.scale;
+        let h = 80 * this.scale;
         
         // Gambar Obstacle (Pastikan load image barrier.png)
         if (imgObstacle.complete) {
