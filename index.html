@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Racer 2D</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="ui-layer">
+            <div id="score-board">Score: <span id="score">0</span></div>
+            <div id="high-score-board">Best: <span id="high-score">0</span></div>
+            
+            <div id="start-screen">
+                <h1>RETRO RACER</h1>
+                <p>Tekan SPASI atau KLIK untuk Mulai</p>
+                <p class="controls">Panah Kiri/Kanan untuk pindah jalur</p>
+            </div>
+
+            <div id="game-over-screen" class="hidden">
+                <h1>CRASHED!</h1>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <button onclick="startGame()">RESTART</button>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
