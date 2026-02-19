@@ -16,18 +16,26 @@ let obstacles = [];
 let spawnTimer = 0; // Timer untuk mengatur jarak antar rintangan
 
 // --- ASSETS LOAD ---
-const imgCarStraight = new Image(); imgCarStraight.src = "assets/car.gif";
-const imgCarLeft = new Image();     imgCarLeft.src = "assets/car_left.gif";
-const imgCarRight = new Image();    imgCarRight.src = "assets/car_right.gif";
-const imgBg = new Image();          imgBg.src = "assets/bg_sky.png"; 
+const imgCarStraight = new Image(); imgCarStraight.src = 'assets/car.gif';
+const imgCarLeft = new Image();     imgCarLeft.src = 'assets/car_left.gif';
+const imgCarRight = new Image();    imgCarRight.src = 'assets/car_right.gif';
+
+// Load semua variasi background (Pastikan nama filenya sama persis!)
+const imgBgSky = new Image();       imgBgSky.src = 'assets/bg_sky.png';
+const imgBgSunset = new Image();    imgBgSunset.src = 'assets/bg_sunset.png';
+const imgBgNight = new Image();     imgBgNight.src = 'assets/bg_night.png';
+const imgBgSunrise = new Image();   imgBgSunrise.src = 'assets/bg_sunrise.png';
+
+// Urutan siklus waktu: Siang -> Senja -> Malam -> Pagi
+const backgrounds = [imgBgSky, imgBgSunset, imgBgNight, imgBgSunrise];
 
 // Load semua jenis rintangan
-const imgObsBarrier = new Image();  imgObsBarrier.src = "assets/concrete_barrier.png";
-const imgObsCrate = new Image();    imgObsCrate.src = "assets/crate_stack.png";
-const imgObsTire = new Image();     imgObsTire.src = "assets/tire_stack.png";
-const imgObsTire2 = new Image();     imgObsTire2.src = "assets/tire_barrier.png";
-const imgObsBarrel = new Image();   imgObsBarrel.src = "assets/red_barrel.png";
-const imgObsBarrel2 = new Image();   imgObsBarrel2.src = "assets/rusty_barrel.png";
+const imgObsBarrier = new Image();  imgObsBarrier.src = 'assets/concrete_barrier.png';
+const imgObsCrate = new Image();    imgObsCrate.src = 'assets/crate_stack.png';
+const imgObsTire = new Image();     imgObsTire.src = 'assets/tire_stack.png';
+const imgObsTire2 = new Image();     imgObsTire2.src = 'assets/tire_barrier.png';
+const imgObsBarrel = new Image();   imgObsBarrel.src = 'assets/red_barrel.png';
+const imgObsBarrel2 = new Image();   imgObsBarrel2.src = 'assets/rusty_barrel.png';
 
 // Masukkan ke dalam array agar mudah diacak nanti
 const obstacleTypes = [imgObsBarrier, imgObsCrate, imgObsTire, imgObsTire2, imgObsBarrel, imgObsBarrel2];
@@ -35,7 +43,7 @@ const obstacleTypes = [imgObsBarrier, imgObsCrate, imgObsTire, imgObsTire2, imgO
 // --- PLAYER OBJECT ---
 const player = {
     y: 550, // Posisi vertikal mobil (tetap di bawah)
-    width: 80,
+    width: 85,
     height: 100,
     sprite: imgCarStraight,
     
@@ -63,11 +71,20 @@ const player = {
 // --- ROAD LOGIC (PSEUDO 3D) ---
 let roadOffset = 0;
 function drawRoad() {
-    // 1. Gambar Background Langit/Kota (Statis)
-    if (imgBg.complete) {
-        ctx.drawImage(imgBg, 0, 0, canvas.width, 300); // Hanya gambar di separuh atas
+    // --- LOGIKA PERGANTIAN BACKGROUND ---
+    // Ingat: skor internal naik tiap frame, skor yang tampil di layar adalah score/10
+    let displayScore = Math.floor(score / 10);
+    
+    // Ganti background setiap 200 poin. 
+    // % backgrounds.length (modulo 4) memastikan index kembali ke 0 setelah 3
+    let bgIndex = Math.floor(displayScore / 200) % backgrounds.length;
+    let currentBg = backgrounds[bgIndex];
+
+    // 1. Gambar Background Langit/Kota yang sedang aktif
+    if (currentBg.complete) {
+        ctx.drawImage(currentBg, 0, 0, canvas.width, 300); 
     } else {
-        ctx.fillStyle = "#87CEEB"; // Warna cadangan jika gambar belum load
+        ctx.fillStyle = "#87CEEB"; 
         ctx.fillRect(0,0, canvas.width, 300);
     }
 
@@ -78,7 +95,7 @@ function drawRoad() {
     // 3. Gambar Jalan Raya (Trapesium)
     ctx.fillStyle = "#555";
     ctx.beginPath();
-    ctx.moveTo(150, 300);  // Kiri Atas (Titik Hilang)
+    ctx.moveTo(150, 300);  // Kiri Atas
     ctx.lineTo(250, 300);  // Kanan Atas
     ctx.lineTo(400, 700);  // Kanan Bawah
     ctx.lineTo(0, 700);    // Kiri Bawah
@@ -86,19 +103,19 @@ function drawRoad() {
 
     // 4. Garis Putus-putus Bergerak
     ctx.strokeStyle = "#FFF";
-    ctx.setLineDash([20, 20]); // Pola garis putus
+    ctx.setLineDash([20, 20]); 
     ctx.lineWidth = 2;
-    ctx.lineDashOffset = -roadOffset; // Efek gerak
+    ctx.lineDashOffset = -roadOffset; 
 
     // Garis Kiri
     ctx.beginPath();
-    ctx.moveTo(183, 300); // Perkiraan perspektif
+    ctx.moveTo(183, 300); 
     ctx.lineTo(133, 700);
     ctx.stroke();
 
     // Garis Kanan
     ctx.beginPath();
-    ctx.moveTo(216, 300); // Perkiraan perspektif
+    ctx.moveTo(216, 300); 
     ctx.lineTo(266, 700);
     ctx.stroke();
     
