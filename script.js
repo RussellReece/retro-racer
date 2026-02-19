@@ -16,18 +16,27 @@ let obstacles = [];
 let spawnTimer = 0; // Timer untuk mengatur jarak antar rintangan
 
 // --- ASSETS LOAD ---
-// Ganti nama file sesuai file Anda di folder assets
-const imgCarStraight = new Image(); imgCarStraight.src = 'assets/car.gif';
-const imgCarLeft = new Image();     imgCarLeft.src = 'assets/car_left.gif';
-const imgCarRight = new Image();    imgCarRight.src = 'assets/car_right.gif';
-const imgBg = new Image();          imgBg.src = 'assets/bg_sky.png'; 
-const imgObstacle = new Image();    imgObstacle.src = 'assets/tire_barrier.png';
+const imgCarStraight = new Image(); imgCarStraight.src = "assets/car.gif";
+const imgCarLeft = new Image();     imgCarLeft.src = "assets/car_left.gif";
+const imgCarRight = new Image();    imgCarRight.src = "assets/car_right.gif";
+const imgBg = new Image();          imgBg.src = "assets/bg_sky.png"; 
+
+// Load semua jenis rintangan
+const imgObsBarrier = new Image();  imgObsBarrier.src = "assets/concrete_barrier.png";
+const imgObsCrate = new Image();    imgObsCrate.src = "assets/crate_stack.png";
+const imgObsTire = new Image();     imgObsTire.src = "assets/tire_stack.png";
+const imgObsTire2 = new Image();     imgObsTire2.src = "assets/tire_barrier.png";
+const imgObsBarrel = new Image();   imgObsBarrel.src = "assets/red_barrel.png";
+const imgObsBarrel2 = new Image();   imgObsBarrel2.src = "assets/rusty_barrel.png";
+
+// Masukkan ke dalam array agar mudah diacak nanti
+const obstacleTypes = [imgObsBarrier, imgObsCrate, imgObsTire, imgObsTire2, imgObsBarrel, imgObsBarrel2];
 
 // --- PLAYER OBJECT ---
 const player = {
     y: 550, // Posisi vertikal mobil (tetap di bawah)
-    width: 75,
-    height: 90,
+    width: 80,
+    height: 100,
     sprite: imgCarStraight,
     
     draw: function() {
@@ -100,34 +109,32 @@ function drawRoad() {
 class Obstacle {
     constructor(lane) {
         this.lane = lane;
-        this.y = 300; // Mulai dari cakrawala (tengah layar)
-        this.scale = 0.1; // Mulai kecil
+        this.y = 300; 
+        this.scale = 0.1; 
+        
+        // Pilih rintangan secara acak dari array obstacleTypes
+        let randomIndex = Math.floor(Math.random() * obstacleTypes.length);
+        this.sprite = obstacleTypes[randomIndex];
     }
 
     update() {
-        // Gerak ke bawah (Mendekat ke layar)
         this.y += gameSpeed;
-        
-        // Scaling effect (Makin ke bawah makin besar)
-        // Rumus sederhana: Jarak dari horizon dibagi total tinggi area jalan
         let progress = (this.y - 300) / 400; 
-        this.scale = 0.2 + (progress * 0.8); // Scale 0.2 -> 1.0
+        this.scale = 0.2 + (progress * 0.8); 
 
-        // Hitung posisi X berdasarkan perspektif (Makin ke bawah makin lebar jarak antar jalur)
-        let centerRoadX = 200; // Tengah kanvas
+        let centerRoadX = 200; 
         let laneOffset = (this.lane - 1) * (30 * (1 + progress * 4)); 
         this.x = centerRoadX + laneOffset;
     }
 
     draw() {
-        let w = 80 * this.scale;
-        let h = 80 * this.scale;
+        let w = 90 * this.scale;
+        let h = 90 * this.scale;
         
-        // Gambar Obstacle (Pastikan load image barrier.png)
-        if (imgObstacle.complete) {
-            ctx.drawImage(imgObstacle, this.x - w/2, this.y - h, w, h);
+        // Gambar menggunakan sprite yang terpilih secara acak untuk rintangan ini
+        if (this.sprite && this.sprite.complete) {
+            ctx.drawImage(this.sprite, this.x - w/2, this.y - h, w, h);
         } else {
-            // Placeholder kotak merah jika gambar gagal load/belum ada
             ctx.fillStyle = "red";
             ctx.fillRect(this.x - w/2, this.y - h, w, h);
         }
