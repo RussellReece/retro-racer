@@ -68,20 +68,22 @@ const player = {
     }
 };
 
+// --- HELPER FUNCTION ---
+// Mengembalikan angka 0 (Siang), 1 (Senja), 2 (Malam), atau 3 (Pagi)
+function getPhaseIndex() {
+    let displayScore = Math.floor(score / 10);
+    return Math.floor(displayScore / 100) % backgrounds.length;
+}
+
 // --- ROAD LOGIC (PSEUDO 3D) ---
 let roadOffset = 0;
 function drawRoad() {
-    // --- LOGIKA PERGANTIAN BACKGROUND ---
-    // Ingat: skor internal naik tiap frame, skor yang tampil di layar adalah score/10
-    let displayScore = Math.floor(score / 10);
-    
-    // Ganti background setiap 200 poin. 
-    // % backgrounds.length (modulo 4) memastikan index kembali ke 0 setelah 3
-    let bgIndex = Math.floor(displayScore / 200) % backgrounds.length;
-    let currentBg = backgrounds[bgIndex];
+    // Gunakan fungsi helper untuk mendapatkan index background
+    let phaseIndex = getPhaseIndex();
+    let currentBg = backgrounds[phaseIndex];
 
     // 1. Gambar Background Langit/Kota yang sedang aktif
-    if (currentBg.complete) {
+    if (currentBg && currentBg.complete) {
         ctx.drawImage(currentBg, 0, 0, canvas.width, 300); 
     } else {
         ctx.fillStyle = "#87CEEB"; 
@@ -238,11 +240,13 @@ function spawnPattern() {
 }
 
 function draw() {
+    // 1. Bersihkan kanvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 2. Gambar Jalan dan Latar Belakang
     drawRoad();
     
-    // Urutan gambar: Obstacle dulu (jika di belakang mobil), lalu Mobil, lalu Obstacle depan
-    // Sorting sederhana berdasarkan Y agar tumpang tindih benar
+    // 3. Urutkan dan Gambar Rintangan & Mobil
     let allObjects = [...obstacles, {type:'player', y: player.y + player.height}];
     allObjects.sort((a,b) => a.y - b.y);
 
@@ -250,6 +254,38 @@ function draw() {
         if (obj.type === 'player') player.draw();
         else obj.draw();
     });
+
+    // 4. --- EFEK PENCAHAYAAN (OVERLAY) ---
+    let phaseIndex = getPhaseIndex();
+    
+    // 0: Siang (Tidak ada efek overlay, biarkan default)
+    
+    if (phaseIndex === 1) { 
+        // 1: Senja (Lapisan warna Oranye/Kemerahan transparan)
+        ctx.fillStyle = "rgba(220, 100, 0, 0.25)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+    } else if (phaseIndex === 2) { 
+        // 2: Malam (Lapisan warna Biru Gelap yang pekat)
+        ctx.fillStyle = "rgba(0, 10, 40, 0.65)"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // BONUS: Sorot Lampu Mobil (Headlights) membelah kegelapan!
+        ctx.fillStyle = "rgba(255, 255, 150, 0.25)"; // Warna kuning cahaya
+        ctx.beginPath();
+        let carCenterX = LANE_Positions[currentLane];
+        // Gambar trapesium cahaya dari lampu belakang mobil ke arah jalan
+        ctx.moveTo(carCenterX - 20, player.y + 70); 
+        ctx.lineTo(carCenterX - 180, 700);          
+        ctx.lineTo(carCenterX + 180, 700);          
+        ctx.lineTo(carCenterX + 20, player.y + 70); 
+        ctx.fill();
+        
+    } else if (phaseIndex === 3) { 
+        // 3: Pagi/Sunrise (Lapisan warna Kuning/Pink hangat)
+        ctx.fillStyle = "rgba(255, 180, 100, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
 function loop() {
