@@ -12,11 +12,27 @@
         <div id="ui-layer">
             <div id="score-board">Score: <span id="score">0</span></div>
             <div id="high-score-board">Best: <span id="high-score">0</span></div>
-            
+            <button id="pause-btn" class="hidden" onclick="togglePause()">II</button>
+
             <div id="start-screen">
                 <h1>RETRO RACER</h1>
-                <p>Tekan SPASI atau KLIK untuk Mulai</p>
-                <p class="controls">Panah Kiri/Kanan untuk pindah jalur</p>
+                
+                <div id="car-selection">
+                    <button id="prev-car" onclick="changeCar(-1)">&#9664;</button>
+                    <div id="car-preview">
+                        <img id="car-preview-img" src="assets/car.gif" alt="Car Preview">
+                        <p id="car-name">Red Racer</p>
+                    </div>
+                    <button id="next-car" onclick="changeCar(1)">&#9654;</button>
+                </div>
+                
+                <button onclick="startGame()">START</button>
+                <p class="controls">Panah Kiri/Kanan atau Tap Kiri/Kanan untuk pindah jalur</p>
+            </div>
+
+            <div id="pause-screen" class="hidden">
+                <h1>PAUSED</h1>
+                <button onclick="togglePause()">Resume</button>
             </div>
 
             <div id="game-over-screen" class="hidden">
@@ -24,6 +40,13 @@
                 <p>Final Score: <span id="final-score">0</span></p>
                 <button onclick="startGame()">RESTART</button>
             </div>
+
+            <div id="countdown-screen" class="hidden">
+                <h1 id="countdown-text">3</h1>
+                <p id="countdown-tutorial" class="hidden">Tekan [Spasi/Tombol Tembak] untuk Menembak Asteroid!</p>
+            </div>
+
+            <button id="shoot-btn" class="hidden">TEMBAK</button>
         </div>
 
         <canvas id="gameCanvas"></canvas>
