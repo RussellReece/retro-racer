@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Retro Racer 2D</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div id="game-container">
@@ -16,29 +18,68 @@
 
             <div id="start-screen">
                 <h1>RETRO RACER</h1>
-                
-                <div id="car-selection">
-                    <button id="prev-car" onclick="changeCar(-1)">&#9664;</button>
-                    <div id="car-preview">
-                        <img id="car-preview-img" src="assets/car.gif" alt="Car Preview">
-                        <p id="car-name">Red Racer</p>
-                    </div>
-                    <button id="next-car" onclick="changeCar(1)">&#9654;</button>
+
+                <div id="main-menu-content">
+                    <button onclick="startGame()">START</button>
+                    <button onclick="openCustomize()">CUSTOMIZE</button>
+                    <p class="controls">Panah Kiri/Kanan atau Tap Kiri/Kanan untuk pindah jalur</p>
                 </div>
-                
-                <button onclick="startGame()">START</button>
-                <p class="controls">Panah Kiri/Kanan atau Tap Kiri/Kanan untuk pindah jalur</p>
+
+                <div id="customize-screen" class="hidden">
+                    <h2>CUSTOMIZE</h2>
+
+                    <div class="customize-section">
+                        <h3>Vehicle</h3>
+                        <div class="selection-row">
+                            <button onclick="changeCar(-1)">&#9664;</button>
+                            <div class="preview-box">
+                                <img id="car-preview-img" src="assets/car.gif" alt="Car Preview">
+                                <p id="car-name">Red Racer</p>
+                            </div>
+                            <button onclick="changeCar(1)">&#9654;</button>
+                        </div>
+                    </div>
+
+                    <div class="customize-section">
+                        <h3>Spaceship</h3>
+                        <div class="selection-row">
+                            <button onclick="changeSpaceship(-1)">&#9664;</button>
+                            <div class="preview-box">
+                                <img id="spaceship-preview-img" src="assets/space/spaceship_preview.png"
+                                    alt="Spaceship Preview">
+                                <p id="spaceship-name">Galactic</p>
+                            </div>
+                            <button onclick="changeSpaceship(1)">&#9654;</button>
+                        </div>
+                    </div>
+
+                    <div class="customize-section">
+                        <h3>Runner</h3>
+                        <div class="selection-row">
+                            <button onclick="changeRunner(-1)">&#9664;</button>
+                            <div class="preview-box">
+                                <img id="runner-preview-img" src="assets/park/person_2_preview.png" alt="Runner Preview">
+                                <p id="runner-name">Park Boy</p>
+                            </div>
+                            <button onclick="changeRunner(1)">&#9654;</button>
+                        </div>
+                    </div>
+
+                    <button onclick="closeCustomize()">BACK</button>
+                </div>
             </div>
 
             <div id="pause-screen" class="hidden">
                 <h1>PAUSED</h1>
                 <button onclick="togglePause()">Resume</button>
+                <button onclick="returnToMainMenu()">Main Menu</button>
             </div>
 
             <div id="game-over-screen" class="hidden">
                 <h1>CRASHED!</h1>
                 <p>Final Score: <span id="final-score">0</span></p>
                 <button onclick="startGame()">RESTART</button>
+                <button onclick="returnToMainMenu()">Main Menu</button>
             </div>
 
             <div id="countdown-screen" class="hidden">
@@ -54,4 +95,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
